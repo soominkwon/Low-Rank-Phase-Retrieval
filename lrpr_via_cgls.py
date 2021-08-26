@@ -45,7 +45,7 @@ def lrprInit(Y, A, rank=None):
     q = Y.shape[1]
     n = A.shape[0]
 
-    Y_init = np.zeros((n, n))
+    Y_init = np.zeros((n, n), dtype=np.complex)
     
     # looping through each frame
     for k in range(q):
@@ -73,7 +73,7 @@ def lrprInit(Y, A, rank=None):
     else:
         U = eig_vec[:, :rank]
         
-    B = np.zeros((q, rank))
+    B = np.zeros((q, rank), dtype=np.complex)
     
     for k in range(q):
         y_k = Y[:, k]
@@ -110,7 +110,7 @@ def updateC(A, U, B):
     m_dim = A.shape[1]    
     q_dim = B.shape[0]
     
-    C_tensor = np.zeros((m_dim, m_dim, q_dim))
+    C_tensor = np.zeros((m_dim, m_dim, q_dim), dtype=np.complex)
     
     for k in range(q_dim):
         A_k = A[:, :, k]
@@ -119,8 +119,8 @@ def updateC(A, U, B):
         x_hat = U @ b_k
         y_hat = A_k.T @ x_hat
         
-        #phase_y = np.exp(1j*np.angle(y_hat))
-        phase_y = np.sign(y_hat)
+        phase_y = np.exp(1j*np.angle(y_hat))
+        #phase_y = np.sign(y_hat)
         C_k = np.diag(phase_y)
         C_tensor[:, :, k] = C_k
         
@@ -141,7 +141,7 @@ def lrpr_fit(Y, A, rank=None, max_iters=15):
     q = Y.shape[1]
 
     Y_sqrt = np.sqrt(Y)
-    C_y_vec = np.zeros((m*q, ));
+    C_y_vec = np.zeros((m*q, ), dtype=np.complex);
 
     for i in range(max_iters):
         print('Current Iteration:', i)

@@ -39,7 +39,7 @@ def construct_Y(A, U, B):
     
     U = np.reshape(U, (n, r), order='F')
     
-    Y_all = np.zeros((m*q, ))
+    Y_all = np.zeros((m*q, ), dtype=np.complex)
     
     st = 0
     en = m
@@ -69,7 +69,7 @@ def constructSolutions(C_y, B, A):
     
     r = B.shape[1] # rank
     
-    solved_U = np.zeros((n*r, ))
+    solved_U = np.zeros((n*r, ), dtype=np.complex)
     
     st = 0
     en = m

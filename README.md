@@ -8,44 +8,48 @@ For more information: https://arxiv.org/abs/1608.04141
 The following is a list of which algorithms correspond to which Python script:
 
 * custom_cgls_lrpr.py - Customized conjugate gradient least squares (CGLS) solver
-* generate_lrpr.py - Generates sample measurements for testing
-* image_tensor_small.npz - Sample image
-* lrpr_via_cgls.py - Implementation of LRPR2
-* lrpr_run.py - Example on using LRPR implementation
+* lrpr_via_cgls.py - Implementation of AltMinTrunc (LRPR2)
+* sample_run.py - Example on using LRPR implementation
 
 ## Tutorial
-This tutorial can be found in lrpr_run.py:
+This tutorial can be found in sample_run.py:
 
 ```
 import numpy as np
-from lrpr_via_cgls import lrpr_fit
 import matplotlib.pyplot as plt
-from generate_lrpr import generateLRPRMeasurements
+from lrpr_via_cgls import lrpr_fit
 
+# importing sample data
+data_name = 'mouse_small_data.npz'
 
-image_name = 'image_tensor_small.npz'
-m_dim = 700
+with np.load(data_name) as sample_data:
+    vec_X = sample_data['arr_0']
+    Y = sample_data['arr_1']
+    A = sample_data['arr_2']
+    
+# initializing parameters
+image_dims = [10, 30]
+rank = 1
+iters = 5
 
-images, Y, A = generateLRPRMeasurements(image_name=image_name, m_dim=m_dim)    
+# fitting new X
+X_lrpr =  lrpr_fit(Y=Y, A=A, rank=rank, max_iters=iters)
 
-U, B = lrpr_fit(Y=Y, A=A, rank=1)
+X = np.reshape(vec_X, (image_dims[0], image_dims[1], -1), order='F')
+X_lrpr = np.reshape(X_lrpr, (image_dims[0], image_dims[1], -1), order='F')
 
-X_hat = U @ B.T
-vec_first_image = X_hat[:, 0]
-
-first_image = np.reshape(vec_first_image, (images.shape[0], images.shape[1]), order='F')
-
-plt.imshow(np.abs(images[:, :, 0]), cmap='gray')
+# plotting results
+plt.imshow(np.abs(X[:, :, 0]), cmap='gray')
 plt.title('True Image')
 plt.show()
 
-plt.imshow(np.abs(first_image), cmap='gray')
-plt.title('Reconstructed Image via LRPR2')
+plt.imshow(np.abs(X_lrpr[:, :, 0]), cmap='gray')
+plt.title('Reconstructed Image via LRPR')
 plt.show()
 ```
 
 ## Solution Example
 
 <p align="center">
-  <a href="url"><img src="https://github.com/soominkwon/Low-Rank-Phase-Retrieval/blob/main/example_lrpr2_result.png" align="left" height="300" width="300" ></a>
+  <a href="url"><img src="https://github.com/soominkwon/Low-Rank-Phase-Retrieval/blob/main/lrpr_sample_results.png" align="left" height="300" width="300" ></a>
 </p>

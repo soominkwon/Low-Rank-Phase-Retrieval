@@ -174,4 +174,5 @@ def lrpr_fit(Y, A, rank=None, max_iters=15):
             
             B[k] = b_k
             
-    return U, B
+    X_lrpr = U @ B.T
+    return X_lrpr

@@ -46,7 +46,7 @@ def construct_Y(A, U, B):
     
     for k in range(q):
         b_k = B[k]
-        y_k = A[:, :, k].T @ U @ b_k
+        y_k = A[:, :, k].conj().T @ U @ b_k
         Y_all[st:en] = y_k.squeeze()
     
         st+=m
@@ -100,7 +100,7 @@ def cglsLRPR(A_sample, B_factor, C_y, max_iter=50, tol=1e-6):
     r = C_y
     s = constructSolutions(C_y=C_y, B=B_factor, A=A_sample)
     n = s.shape[0]
-    x = np.zeros((n, )) # optimize variable
+    x = np.zeros((n, ), dtype=np.complex) # optimize variable
     
 
     # initializing for optimization

@@ -54,7 +54,7 @@ def lrprInit(Y, A, rank=None):
         y_k_mean = y_k.mean()
 
         trunc_y_k = np.where(np.abs(y_k)<=9*y_k_mean, y_k, 0)
-        Y_init += (A_k @ np.diag(trunc_y_k) @ A_k.T)
+        Y_init += (A_k @ np.diag(trunc_y_k) @ A_k.conj().T)
         
     Y_init = (1/(m*q))*Y_init
     
@@ -80,8 +80,8 @@ def lrprInit(Y, A, rank=None):
         A_k = A[:, :, k]
         mean_y_k = y_k.mean()
         
-        avg_Y = (1/m)*(A_k @ np.diag(y_k) @ A_k.T)
-        B_init_mat = U.T @ avg_Y @ U
+        avg_Y = (1/m)*(A_k @ np.diag(y_k) @ A_k.conj().T)
+        B_init_mat = U.conj().T @ avg_Y @ U
         
         b_val, b_vec = np.linalg.eig(B_init_mat)
         b_k = np.sqrt(mean_y_k) * b_vec[:, 0]
@@ -117,7 +117,7 @@ def updateC(A, U, B):
         b_k = B[k]
         
         x_hat = U @ b_k
-        y_hat = A_k.T @ x_hat
+        y_hat = A_k.conj().T @ x_hat
         
         phase_y = np.exp(1j*np.angle(y_hat))
         #phase_y = np.sign(y_hat)
@@ -167,12 +167,12 @@ def lrpr_fit(Y, A, rank=None, max_iters=15):
             y_k = Y_sqrt[:, k]
             C_k = C_all[:, :, k]
             
-            M = A_k.T @ U
+            M = A_k.conj().T @ U
             
             # closed form for M
-            b_k = np.linalg.inv(M.T @ M) @ M.T @ (C_k @ y_k)
+            b_k = np.linalg.inv(M.conj().T @ M) @ M.conj().T @ (C_k @ y_k)
             
             B[k] = b_k
             
-    X_lrpr = U @ B.T
+    X_lrpr = U @ B.conj().T
     return X_lrpr
